@@ -22,6 +22,9 @@ public class Account {
 	public void addMoney (double amount) {
 		this.balance += amount;
 	}
+	public void removeMoney (double amount) {
+		this.balance -= amount;
+	}
 	public Account(String accountName, double balance) {
 		this.accountName = accountName;
 		this.balance = balance;

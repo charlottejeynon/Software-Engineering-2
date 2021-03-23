@@ -1,3 +1,5 @@
+import com.sun.source.tree.ReturnTree;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.XMLFormatter;
@@ -60,6 +62,18 @@ public class NewBank {
                         return depositMoney(customer, amount, accountName);
                     }
                     return "FAIL";
+                case "WITHDRAWMONEY":
+                    if (splitted.length == 3) {
+                        double amount;
+                        String accountName = splitted[2];
+                        try {
+                            amount = Double.parseDouble(splitted[1]);
+                        } catch (NumberFormatException n) {
+                            return "FAIL";
+                        }
+                        return withdrawMoney(customer, amount, accountName);
+                    }
+                    return "FAIL";
                 case "SHOWMYACCOUNTS":
                     return showMyAccounts(customer);
                 case "NEWACCOUNT":
@@ -108,6 +122,20 @@ public class NewBank {
         return "FAIL - Incorrect account name";
     }
 
+    private String withdrawMoney(CustomerID customerID, double amount, String accountName) {
+        var customer = getCustomer(customerID);
+        var account = customer.getAccounts().stream().filter(x -> x.getAccountName().equals(accountName)).collect(Collectors.toList());
+        if (account.size() > 0) {
+            if (account.get(0).getOpeningBalance() >= amount) {
+            account.get(0).removeMoney(amount);
+            return "SUCCESS";
+            }
+            return "Fail - not enough money";
+        }
+        return "FAIL - Incorrect account name";
+    }
+    
+    
     private Customer getCustomer(CustomerID customerID) {
         return customers.get(customerID.getKey());
     }
