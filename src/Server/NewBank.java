@@ -18,6 +18,7 @@ public class NewBank {
     private void addTestData() {
         Customer bhagy = new Customer();
         bhagy.addAccount(new Account("Main", 1000.0));
+        bhagy.addAccount(new Account("Alternate", 1000.0));
         customers.put("Bhagy", bhagy);
 
         Customer christina = new Customer();
@@ -72,6 +73,19 @@ public class NewBank {
                             return "FAIL";
                         }
                         return withdrawMoney(customer, amount, accountName);
+                    }
+                    return "FAIL";
+                    case "MOVEMONEY":
+                    if (splitted.length == 4) {
+                        double amount;
+                        String from = splitted[1];
+                        String to = splitted[2];
+                        try {
+                            amount = Double.parseDouble(splitted[3]);
+                        } catch (NumberFormatException n) {
+                            return "FAIL";
+                        }
+                        return moveMoney(customer, from, to, amount);
                     }
                     return "FAIL";
                 case "SHOWMYACCOUNTS":
@@ -134,6 +148,22 @@ public class NewBank {
         }
         return "FAIL - Incorrect account name";
     }
+
+    private String moveMoney(CustomerID customerID, String from, String to, double amount) {
+        var customer = getCustomer(customerID);
+        var fromAcc = customer.getAccounts().stream().filter(x -> x.getAccountName().equals(from)).collect(Collectors.toList());
+        var toAcc = customer.getAccounts().stream().filter(x -> x.getAccountName().equals(to)).collect(Collectors.toList());
+        if (fromAcc.size() > 0 && toAcc.size() > 0) {
+            if (fromAcc.get(0).getOpeningBalance() >= amount) {
+                fromAcc.get(0).removeMoney(amount);
+                toAcc.get(0).addMoney(amount);
+                return "SUCCESS";
+            }
+            return "Fail - not enough money";
+        }
+        return "FAIL - Incorrect accountName name";
+    }
+    
     
     
     private Customer getCustomer(CustomerID customerID) {
