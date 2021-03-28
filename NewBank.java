@@ -80,6 +80,28 @@ public class NewBank {
 		}
 		return "FAIL";
 	}
+
+	private String payOthers(CustomerID customerID, String from, CustomerID customerID, String to, double amount){
+		var customer = getCustomer(customerID);
+		var fromAcc = customer.getAccounts().stream().filter(x -> x.getAccountName().equals(from)).collect(Collectors.toList());
+        	var otherCustomer= getCustomer(customerID);
+		var toOther = customer.getAccounts().stream().filter(x -> x.getAccountName().equals(to)).collect(Collectors.toList());
+        	
+		if (fromAcc.size() > 0 && toAcc.size() > 0) {
+
+            		if (fromAcc.get(0).getOpeningBalance() >= amount) {
+                		fromAcc.get(0).removeMoney(amount);
+                		toAcc.get(0).addMoney(amount);
+                		return "SUCCESS";
+            		}
+
+            	return "Fail - not enough money";
+
+        	}
+
+        return "FAIL - Incorrect accountName name";
+
+    	}
 	
 	private String showMyAccounts(CustomerID customer) {
 		return (customers.get(customer.getKey())).accountsToString();
