@@ -4,6 +4,16 @@ public class Customer {
 	
 	public ArrayList<Account> accounts;
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	private String password;
+
 	public ArrayList<Account> getAccounts() {
 		return accounts;
 	}
@@ -12,8 +22,10 @@ public class Customer {
 		this.accounts = accounts;
 	}
 
-	public Customer() {
+	public Customer(String password) {
 		accounts = new ArrayList<>();
+		this.password = password;
+
 	}
 	
 	public String accountsToString() {
