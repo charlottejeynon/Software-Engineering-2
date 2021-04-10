@@ -10,6 +10,6 @@ Requirements for Group 17
 
 
 Roles:
-Charlotte Eynon - Scrum Master
-Lukas Vaclavek - Product Owner
-Christina Roumpesi and Rohan Sitaram - Scrum Team
+A - Scrum Master
+B - Product Owner
+C and D - Scrum Team
