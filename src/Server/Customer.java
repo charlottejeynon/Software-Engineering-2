@@ -1,3 +1,5 @@
+package newbank.server;
+
 import java.util.ArrayList;
 
 public class Customer {

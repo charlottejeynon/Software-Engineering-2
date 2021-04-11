@@ -1,3 +1,5 @@
+package newbank.server;
+
 import com.sun.source.tree.ReturnTree;
 
 import java.util.Arrays;
@@ -47,7 +49,7 @@ public class NewBank {
 
     // commands from the NewBank customer are processed in this method
     public synchronized String processRequest(CustomerID customer, String request) {
-        String[] splitted = new String[3];
+        String[] splitted = new String[4];
         try {
             splitted = request.split(" ");
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -55,6 +57,18 @@ public class NewBank {
         }
         if (customers.containsKey(customer.getKey())) {
             switch (splitted[0]) {
+                case "PAY":
+                    if (splitted.length == 3) {
+                        double amount;
+                       CustomerID recipient = new CustomerID(splitted[1]);
+                        try {
+                            amount = Double.parseDouble(splitted[2]);
+                        } catch (NumberFormatException n) {
+                            return "FAIL";
+                        }
+                        return payMoney(customer, recipient, amount);
+                    }
+                    return "FAIL";
                 case "DEPOSITMONEY":
                     if (splitted.length == 3) {
                         double amount;
@@ -114,8 +128,10 @@ public class NewBank {
                         } catch (NumberFormatException n) {
                             return "FAIL";
                         }
-                        Account account = new Account(splitted[1], amount);
-                        return newAccount(customer, account);
+                        if (validAccType(splitted[1])){
+                            Account account = new Account(splitted[1], amount);
+                            return newAccount(customer, account);
+                        }
                     } else {
                         return "FAIL";
                     }
@@ -167,8 +183,23 @@ public class NewBank {
         }
         return "FAIL - Incorrect accountName name";
     }
-    
-    
+
+    private String payMoney(CustomerID customerID, CustomerID recipientID, double amount) {
+        var customer = getCustomer(customerID);
+        var recipient = getCustomer(recipientID);
+        var fromAcc = customer.getAccounts();
+        var toAcc = recipient.getAccounts();
+
+        if (fromAcc.size() > 0) {
+            if (fromAcc.get(0).getOpeningBalance() >= amount) {
+                fromAcc.get(0).removeMoney(amount);
+                toAcc.get(0).addMoney(amount);
+                return "SUCCESS";
+            }
+            return "Fail - not enough money";
+        }
+        return "FAIL - Incorrect accountName name";
+    }
     
     private Customer getCustomer(CustomerID customerID) {
         return customers.get(customerID.getKey());
